@@ -33,22 +33,12 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v2
 
-      - name: grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: sonaqube Analysis
-        run: ./gradlew test sonarqube
-          -Dsonar.host.url=${{ env.SONARQUBE_URL }}
-          -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
-          -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
-          -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
-
       - name: get analysis results
         id: get_analysis_results
         run: |
           curl --request GET \
-          --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
-          -H 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}'
+          --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}' \
+          --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
       - name: parse json data
         id: parse_json_data
         run: |
