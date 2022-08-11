@@ -56,6 +56,8 @@ jobs:
       SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_BRANCH: ${{ github.event.pull_request.branch }}
+    outputs:
+      matrix: ${{ steps.parse_json_data.outputs.matrix }}
     steps:
       - name: checkout source code
         uses: actions/checkout@v2
@@ -76,13 +78,19 @@ jobs:
           curl --request GET \
           --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}' \
-          echo "results=${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}" >> $GITHUB_ENV
       - name: parse json data
-        if: ${ env.results }.metric == 'bug'
-        run: echo "bug_value=${ env.results }.value" >> $GITHUB_ENV
+        id: parse_json_data
+        run: |
+          echo "::set-output name=matrix::${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}"
+  comment:
+    needs: analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.analysis.outputs.matrix)}}
+    steps:
       - name: parse json data2
-        if: ${ env.results }.metric == 'code_smells'
-        run: echo "code_smells_value=${ env.results }.value" >> $GITHUB_ENV
+        if: ${ matrix.results }.metric == 'code_smells'
+        run: echo "code_smells_value=${ matrix.results }.value" >> $GITHUB_ENV
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
@@ -95,7 +103,6 @@ jobs:
               repo: context.repo.repo,
               body: `## 🚧 Analysis Results
             ${ env.bug_value }
-            ${ env.code_smells_value }
             ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
             })
