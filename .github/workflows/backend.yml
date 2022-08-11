@@ -37,7 +37,7 @@ jobs:
         id: get_analysis_results
         run: |
           curl --request GET \
-          --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}' \
+          --header 'Authorization:Basic ${{ env.SONARQUBE_TOKEN }}' \
           --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
       - name: parse json data
         id: parse_json_data
