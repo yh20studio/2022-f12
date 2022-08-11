@@ -1,6 +1,12 @@
 name: backend
 
 on:
+  push:
+    branches:
+      - main
+      - release
+    paths:
+      - 'backend/**'
   pull_request:
     branches:
       - main
@@ -50,8 +56,6 @@ jobs:
       SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_BRANCH: ${{ github.event.pull_request.branch }}
-    strategy:
-      matrix: ${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}
     steps:
       - name: checkout source code
         uses: actions/checkout@v2
@@ -72,13 +76,13 @@ jobs:
           curl --request GET \
           --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}' \
-
+          echo "results=${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}" >> $GITHUB_ENV
       - name: parse json data
-        if: matrix.metric == 'bug'
-        run: echo "bug_value=matrix.value" >> $GITHUB_ENV
+        if: ${ env.results }.metric == 'bug'
+        run: echo "bug_value=${ env.results }.value" >> $GITHUB_ENV
       - name: parse json data2
-        if: matrix.metric == 'code_smells'
-        run: echo "code_smells_value=matrix.value" >> $GITHUB_ENV
+        if: ${ env.results }.metric == 'code_smells'
+        run: echo "code_smells_value=${ env.results }.value" >> $GITHUB_ENV
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
