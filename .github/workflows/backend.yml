@@ -25,6 +25,7 @@ jobs:
       SONARQUBE_PROJECT_KEY: F12-local
       SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
       SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+      SONARQUBE_AUTH_URL: ${{ secrets.SONARQUBE_AUTH_URL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_BRANCH: ${{ github.event.pull_request.branch }}
     outputs:
@@ -37,8 +38,7 @@ jobs:
         id: get_analysis_results
         run: |
           curl --request GET \
-          --header 'Authorization:Basic ${{ env.SONARQUBE_TOKEN }}' \
-          --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
+          --url ${{ env.SONARQUBE_AUTH_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
       - name: parse json data
         id: parse_json_data
         run: |
