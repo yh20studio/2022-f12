@@ -37,8 +37,9 @@ jobs:
       - name: get analysis results
         id: get_analysis_results
         run: |
-          curl --request GET \
-          --url ${{ env.SONARQUBE_AUTH_URL }}/api/measures/search?projectKeys=F12-local&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
+          curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/measures/search' \
+          -d projectKeys=F12-local \
+          -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
       - name: parse json data
         id: parse_json_data
         run: |
