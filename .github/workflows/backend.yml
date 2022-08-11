@@ -89,8 +89,8 @@ jobs:
       matrix: ${{ needs.analysis.outputs.matrix }}
     steps:
       - name: parse json data2
-        if: ${ matrix.metric } == 'code_smells'
-        run: echo "code_smells_value=${ matrix.value }" >> $GITHUB_ENV
+        if: ${{ matrix.metric }} == 'code_smells'
+        run: echo "code_smells_value=${{ matrix.value }}" >> $GITHUB_ENV
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
