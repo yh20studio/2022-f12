@@ -86,11 +86,11 @@ jobs:
     needs: analysis
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.analysis.outputs.matrix)}}
+      matrix: ${{ needs.analysis.outputs.matrix }}
     steps:
       - name: parse json data2
-        if: ${ matrix.results }.metric == 'code_smells'
-        run: echo "code_smells_value=${ matrix.results }.value" >> $GITHUB_ENV
+        if: ${ matrix.metric } == 'code_smells'
+        run: echo "code_smells_value=${ matrix.value }" >> $GITHUB_ENV
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
@@ -102,7 +102,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `## 🚧 Analysis Results
-            ${ env.bug_value }
+            ${ env.code_smells_value }
             ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
             })
