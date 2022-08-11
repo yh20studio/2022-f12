@@ -19,35 +19,6 @@ defaults:
     working-directory: backend
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: gradle build
-        run: ./gradlew build
-
-      - name: publish unit test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          files: backend/build/test-results/test/TEST-*.xml
-
-      - name: add comments to a pull request
-        uses: mikepenz/action-junit-report@v3
-        if: always()
-        with:
-          report_paths: backend/build/test-results/test/TEST-*.xml
   analysis:
     runs-on: ubuntu-latest
     env:
@@ -77,7 +48,7 @@ jobs:
         run: |
           curl --request GET \
           --url ${{ env.SONARQUBE_URL }}/api/measures/search?projectKeys=${{ env.SONARQUBE_PROJECT_KEY }}&metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
-          --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}' \
+          --header 'authorization: Bearer ${{ env.SONARQUBE_TOKEN }}'
       - name: parse json data
         id: parse_json_data
         run: |
