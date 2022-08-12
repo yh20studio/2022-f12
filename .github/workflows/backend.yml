@@ -41,8 +41,8 @@ jobs:
           
           for data in $RESPONSE
           do
-            echo ${data | jq '.metric'}
-            echo ${data | jq '.value'}
+            echo $data | jq '.metric'
+            echo ${$data | jq '.value'}
           done
 
       - name: comment Sonarqube URL
