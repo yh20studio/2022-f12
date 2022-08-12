@@ -42,7 +42,7 @@ jobs:
           echo $RESPONSE
           for data in $RESPONSE
           do
-            echo "::set-env name=${data | jq '.metric']}_value::${data | jq '.value}"
+            echo "::set-env name=${data | jq '.metric']}_value::${data | jq '.value'}"
           done
 
       - name: comment Sonarqube URL
