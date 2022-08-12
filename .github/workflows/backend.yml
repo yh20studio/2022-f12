@@ -40,6 +40,10 @@ jobs:
           | jq '.measures')
           
           echo $RESPONSE
+          for data in $RESPONSE
+          do
+            echo "${{ data.metric }}_value=${{ data.value }}" >> $GITHUB_ENV
+          done
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
