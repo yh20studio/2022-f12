@@ -41,10 +41,7 @@ jobs:
 
       - name: parse json data
         run: |
-          for data in ${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}
-          do
-            echo "${{ data.metric }}_value=${{ data.value }}" >> $GITHUB_ENV
-          done
+          echo ${{ fromJson(steps.get_analysis_results.outputs.measures.matrix) }}
           
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
