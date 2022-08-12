@@ -33,16 +33,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: get analysis results
-        id: get_analysis_results
         run: |
-          curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/measures/search' \
+          response = $(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/measures/search' \
           -d projectKeys=F12-local \
-          -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks
-
-      - name: parse json data
-        run: |
-          echo ${{ fromJson(steps.get_analysis_results.outputs) }}
+          -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks)
           
+          echo ${{ fromJson(response) }}
+          echo ${{ fromJson(response).measures }}
+
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
         with:
