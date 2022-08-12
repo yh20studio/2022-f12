@@ -44,7 +44,13 @@ jobs:
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
+            BEST_VALUE=$(echo $data | jq -r '.bestValue')
             echo "::set-output name=${METRIC}_value::${VALUE}"
+            if [ $BEST_VALUE == true ]; then
+              BEST_VALUE=✅
+            else
+              BEST_VALUE=❌              
+            echo "::set-output name=${METRIC}_best_value::${BEST_VALUE}"
           done
 
       - name: comment Sonarqube URL
@@ -57,7 +63,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `## 🚧 Analysis Results
-            ${{ steps.analysis_results.outputs.code_smells_value }}
+            Bugs : ${{ steps.analysis_results.outputs.bug_value }} ${{ steps.analysis_results.outputs.bug_best_value }} 
             ${{ steps.analysis_results.outputs.coverage_value }}
             ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
