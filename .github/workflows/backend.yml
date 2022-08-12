@@ -43,8 +43,7 @@ jobs:
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
-            echo $METRIC
-            echo $VALUE
+            echo "::set-env name=${METRIC}_value::${VALUE}"
           done
 
       - name: comment Sonarqube URL
