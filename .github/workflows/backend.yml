@@ -38,11 +38,10 @@ jobs:
           -d projectKeys=F12-local \
           -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           | jq '.measures')
-          
-          echo "$RESPONSE" | jq '.[].metric, .[].value' | while read -r metric, value;
+
+          echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
             echo $data
-            echo $value
           done
 
       - name: comment Sonarqube URL
