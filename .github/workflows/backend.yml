@@ -42,7 +42,8 @@ jobs:
           echo $RESPONSE
           for data in $RESPONSE
           do
-            echo "${data.metric}_value=${data.value}" >> $GITHUB_ENV
+            echo "${data.metric}"
+            echo "${data.value}"
           done
 
       - name: comment Sonarqube URL
