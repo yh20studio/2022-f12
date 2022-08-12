@@ -42,8 +42,8 @@ jobs:
           echo $RESPONSE
           for data in $RESPONSE
           do
-            echo "${data.metric}"
-            echo "${data.value}"
+            echo "${data[metric]}"
+            echo "${data[value]}"
           done
 
       - name: comment Sonarqube URL
