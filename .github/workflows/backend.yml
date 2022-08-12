@@ -39,7 +39,7 @@ jobs:
           -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           | jq '.measures')
           
-          echo fromJson($RESPONSE)
+          echo $RESPONSE
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
