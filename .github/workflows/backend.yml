@@ -39,8 +39,9 @@ jobs:
           -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           | jq '.measures')
           
-          $RESPONSE | jq -c '.[]' | while read i; do
-            echo $i
+          "$RESPONSE" | jq -r '.[]' | while read -r data;
+          do
+            echo $data
           done
 
       - name: comment Sonarqube URL
