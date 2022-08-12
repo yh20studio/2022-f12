@@ -41,7 +41,7 @@ jobs:
 
       - name: parse json data
         run: |
-          echo ${{ fromJson(steps.get_analysis_results.outputs.measures) }}
+          echo ${{ fromJson(steps.get_analysis_results.outputs) }}
           
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
