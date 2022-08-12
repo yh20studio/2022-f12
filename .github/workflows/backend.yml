@@ -42,21 +42,21 @@ jobs:
           echo $RESPONSE
           for data in $RESPONSE
           do
-            echo "${data[metric]}_value=${data[value]}" >> $GITHUB_ENV
+            echo "::set-env name=${data[metric]}_value::${data[value]}"
           done
 
       - name: comment Sonarqube URL
         uses: actions/github-script@v4
         with:
           script: |
-            const { SONARQUBE_PROJECT_KEY, SONARQUBE_URL, PR_NUMBER, code_smells_value, coverage_value } = process.env
+            const { SONARQUBE_PROJECT_KEY, SONARQUBE_URL, PR_NUMBER } = process.env
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `## 🚧 Analysis Results
-            ${ code_smells_value }
-            ${ coverage_value }
+            $code_smells_value
+            $coverage_value
             ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
             })
