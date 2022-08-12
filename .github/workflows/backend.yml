@@ -33,6 +33,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: get analysis results
+        id: analysis_results
         run: |
           RESPONSE=$(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/measures/search' \
           -d projectKeys=F12-local \
@@ -43,7 +44,7 @@ jobs:
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
-            echo "::set-env name=${METRIC}_value::${VALUE}"
+            echo "::set-output name=${METRIC}_value::${VALUE}"
           done
 
       - name: comment Sonarqube URL
@@ -56,8 +57,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `## 🚧 Analysis Results
-            $code_smells_value
-            $coverage_value
+            ${{ steps.vars.analysis_results.code_smells_value }}
+            ${{ steps.vars.analysis_results.coverage_value }}
             ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
             })
