@@ -40,7 +40,7 @@ jobs:
           | jq '.measures')
           
           echo $RESPONSE
-          for data in $RESPONSE
+          for data in $RESPONSE | jq -c '.[] | .'
           do
             echo ${data | jq '.metric'}
             echo ${data | jq '.value'}
