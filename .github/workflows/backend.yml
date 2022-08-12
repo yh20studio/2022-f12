@@ -59,6 +59,6 @@ jobs:
               body: `## 🚧 Analysis Results
             ${{ steps.analysis_results.code_smells_value }}
             ${{ steps.analysis_results.coverage_value }}
-            ${{ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }}
+            ${ SONARQUBE_PROJECT_KEY }-${ PR_NUMBER }
             [분석 결과 확인하기](${SONARQUBE_URL})`
             })
