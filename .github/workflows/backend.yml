@@ -41,8 +41,8 @@ jobs:
 
           echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
-            METRIC = $(echo $data | jq -r '.metric')
-            VALUE = $(echo $data | jq -r '.value')
+            METRIC=$(echo $data | jq -r '.metric')
+            VALUE=$(echo $data | jq -r '.value')
             echo $METRIC
             echo $VALUE
           done
