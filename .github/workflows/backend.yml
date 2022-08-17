@@ -49,15 +49,15 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v2
 
-      - name: grant execute permission for gradlew
-        run: chmod +x gradlew
+    #  - name: grant execute permission for gradlew
+    #    run: chmod +x gradlew
 
-      - name: sonaqube Analysis
-        run: ./gradlew test sonarqube
-          -Dsonar.host.url=${{ env.SONARQUBE_URL }}
-          -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
-          -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
-          -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
+    #  - name: sonaqube Analysis
+    #    run: ./gradlew test sonarqube
+    #      -Dsonar.host.url=${{ env.SONARQUBE_URL }}
+     #     -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
+      #    -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
+       #   -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
 
       - name: get analysis results
         id: analysis_results
@@ -84,7 +84,7 @@ jobs:
         run: |
           RESPONSE=$(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/qualitygates/project_status' \
           -d projectKey=F12-local \
-          | jq '.projectStatus' | '.conditions')
+          | jq '.projectStatus.conditions')
           echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
             STATUS=$(echo $data | jq -r '.status')
