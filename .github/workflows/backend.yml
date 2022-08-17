@@ -39,7 +39,7 @@ jobs:
   analysis:
     runs-on: ubuntu-latest
     env:
-      SONARQUBE_PROJECT_KEY: F12
+      SONARQUBE_PROJECT_KEY: F12-local
       SONARQUBE_URL: ${{ secrets.SONARQUBE_URL }}
       SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       SONARQUBE_AUTH_URL: ${{ secrets.SONARQUBE_AUTH_URL }}
@@ -49,47 +49,41 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v2
 
-      - name: grant execute permission for gradlew
-        run: chmod +x gradlew
+    #  - name: grant execute permission for gradlew
+    #    run: chmod +x gradlew
 
-      - name: sonaqube Analysis
-        run: ./gradlew test sonarqube
-          -Dsonar.host.url=${{ env.SONARQUBE_URL }}
-          -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
-          -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
-          -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
+    #  - name: sonaqube Analysis
+    #    run: ./gradlew test sonarqube
+    #      -Dsonar.host.url=${{ env.SONARQUBE_URL }}
+     #     -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_KEY }}
+      #    -Dsonar.projectName=${{ env.SONARQUBE_PROJECT_KEY }}-${{ env.PR_NUMBER }}
+       #   -Dsonar.login=${{ env.SONARQUBE_TOKEN }}
 
       - name: get analysis results
         id: analysis_results
         run: |
           RESPONSE=$(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/measures/search' \
-          -d projectKeys=F12 \
+          -d projectKeys=F12-local \
           -d metricKeys=bugs,vulnerabilities,security_hotspots,code_smells,coverage,tests,test_success_density,test_failures,test_errors,skipped_tests,duplicated_lines_density,duplicated_files,duplicated_blocks \
           | jq '.measures')
           echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
-            BEST_VALUE=$(echo $data | jq -r '.bestValue')
             echo "::set-output name=${METRIC}_value::${VALUE}"
-            if [ $BEST_VALUE == true ]; then
-              echo "::set-output name=${METRIC}_best_value::✅"
-            else
-              echo "::set-output name=${METRIC}_best_value::❌"                 
-            fi
           done
 
       - name: get report results
         id: report_results
         run: |
           RESPONSE=$(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/qualitygates/project_status' \
-          -d projectKey=F12 \
-          | jq '.projectStatus')
+          -d projectKey=F12-local \
+          | jq '.projectStatus.conditions')
           echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
             STATUS=$(echo $data | jq -r '.status')
             METRIC_KEY=$(echo $data | jq -r '.metricKey')
-            if [ STATUS == OK ]; then
+            if [ $STATUS == "OK" ]; then
               echo "::set-output name=${METRIC_KEY}::✅"
             else
               echo "::set-output name=${METRIC_KEY}::❌"                 
