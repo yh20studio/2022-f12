@@ -84,7 +84,7 @@ jobs:
         run: |
           RESPONSE=$(curl -X GET -G '${{ env.SONARQUBE_AUTH_URL }}/api/qualitygates/project_status' \
           -d projectKey=F12-local \
-          | jq '.projectStatus')
+          | jq '.projectStatus' | '.conditions')
           echo "$RESPONSE" | jq -c '.[] | .' | while read -r data;
           do
             STATUS=$(echo $data | jq -r '.status')
