@@ -70,6 +70,7 @@ jobs:
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
+            echo "::set-output name=${METRIC}_value::${VALUE}"
           done
 
       - name: get report results
