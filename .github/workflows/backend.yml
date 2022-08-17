@@ -70,13 +70,6 @@ jobs:
           do
             METRIC=$(echo $data | jq -r '.metric')
             VALUE=$(echo $data | jq -r '.value')
-            BEST_VALUE=$(echo $data | jq -r '.bestValue')
-            echo "::set-output name=${METRIC}_value::${VALUE}"
-            if [ $BEST_VALUE == true ]; then
-              echo "::set-output name=${METRIC}_best_value::✅"
-            else
-              echo "::set-output name=${METRIC}_best_value::❌"                 
-            fi
           done
 
       - name: get report results
@@ -89,7 +82,7 @@ jobs:
           do
             STATUS=$(echo $data | jq -r '.status')
             METRIC_KEY=$(echo $data | jq -r '.metricKey')
-            if [ STATUS == OK ]; then
+            if [ STATUS == "OK" ]; then
               echo "::set-output name=${METRIC_KEY}::✅"
             else
               echo "::set-output name=${METRIC_KEY}::❌"                 
